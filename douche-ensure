@@ -1,0 +1,10 @@
+#!/usr/bin/env zsh
+
+entity=$1
+
+if [[ -d "$entity" ]]; then
+else
+	mkdir -p $entity
+	git init --bare $entity
+fi
+

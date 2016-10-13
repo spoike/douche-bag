@@ -1,0 +1,30 @@
+#!/usr/bin/env zsh
+#set	Sets the meta data
+
+USAGE="Usage: douche set {key} {value}"
+
+if [ $# -lt 2 ]; then
+	echo $USAGE
+	exit 1
+fi
+
+metafile=$1
+content=$2
+
+./douche-ensure mikael.brassman
+pushd mikael.brassman
+
+parent_sha=$(cat refs/heads/master)
+blob_sha=$(echo "$2" | git hash-object -w --stdin)
+git update-index --add --cacheinfo 100644 $blob_sha $metafile
+tree_sha=$(git write-tree)
+if [[ -z "${parent_sha// }" ]]; then
+	commit_id=$(echo "updated $metafile" | git commit-tree $tree_sha)
+else
+	commit_id=$(echo "updated $metafile" | git commit-tree $tree_sha -p $parent_sha)
+fi
+git update-ref refs/heads/master $commit_id
+
+popd
+
+echo "$commit_id"

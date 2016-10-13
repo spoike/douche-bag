@@ -1,0 +1,30 @@
+#!/usr/bin/env zsh
+
+USAGE=$(<<END
+Usage: douche {command [args...]}
+
+Commands:
+
+END
+);
+PREFIX="$0-"
+
+if [ $# -lt 1 ]; then
+	echo $USAGE
+	for f in $(ls $PREFIX*); do
+		cmd=$(head -n2 $f | tail -n1 | cut -b2-)
+		if [ ! -z $cmd ]; then
+			echo $cmd
+		fi
+	done
+	exit 1
+fi
+
+cmd=$1
+shift
+$PREFIX$cmd $@
+
+#while (($#)); do
+	#echo $@
+	#shift
+#done

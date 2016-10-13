@@ -1,0 +1,22 @@
+#!/usr/bin/env zsh
+#get	Gets metadata from entity
+
+USAGE="Usage: douche get {key}"
+
+if [ $# -lt 1 ]; then
+	echo $USAGE
+	exit 1
+fi
+
+metafile=$1
+
+./douche-ensure mikael.brassman
+pushd mikael.brassman
+
+parent_sha=$(cat refs/heads/master)
+tree_sha=$(git cat-file -p $parent_sha | grep tree | cut -d\  -f2)
+file_sha=$(git cat-file -p $tree_sha | grep $metafile | cut -d\  -f3 | cut --output-delimiter=\  -f1)
+[[ -z "$file_sha" ]] && echo "$metafile is missing" && exit 1
+git cat-file -p $file_sha
+
+popd
